@@ -1,0 +1,89 @@
+<link rel="stylesheet" type="text/css" href="../assets/css/styles.css" />
+<link rel="stylesheet" type="text/css" href="../assets/css/bootstrap.min.css" />
+
+<script type="text/javascript" src="../assets/js/jquery-3.2.1.min.js"></script>
+<!--
+We will create a family tree using just CSS(3)
+The markup will be simple nested lists
+-->
+<script type="text/javascript">
+$(function(){
+	$('.node-delete').click(function(){
+		var id = $(this).attr('id').split('-')[1];
+		if(id){
+			if(confirm('Are you sure you want delete this node?')){
+				deleteNode(id);
+			}
+		}
+	});
+
+	$("#nodefrom").submit(function(e) {
+		var id = $('#nodein').val();
+		if(id){
+			createNode(id);
+		}
+		e.preventDefault();
+	});
+	
+});
+
+function deleteNode(id) {
+	$.ajax({
+	  url: "node/delete?node="+id,
+	  cache: false,
+	  dataType:'json',
+	  success: function(result){
+	    if(result.success){
+	    	location.reload();
+	    }
+	    else{
+	    	alert(result.errorMsg);
+	    }
+	  }
+	});
+}
+
+function createNode(id) {
+	$.ajax({
+	  url: "node/create?node="+id,
+	  cache: false,
+	  dataType:'json',
+	  success: function(result){
+	    if(result.success){
+	    	location.reload();
+	    }
+	    else{
+	    	$('.alert-danger').html(result.errorMsg).show();
+	    }
+	  }
+	});
+}
+</script>
+
+
+<div class="container">
+
+  <div class="row">
+    <div class="Absolute-Center is-Responsive">
+      <div class="col-sm-12 col-md-10 col-md-offset-1">
+      	<div class="alert alert-danger" style="display: none;"></div>
+
+        <form id="nodefrom">
+		    <div class="form-group">
+		        <label for="nodein">Create Node Under</label>
+		        <input type="text" class="form-control" id="nodein" placeholder="node">
+		    </div>
+		    
+		    <button type="submit" id="createnode" class="btn btn-primary">Create</button>
+		</form> 
+
+
+		<div class="tree">
+		<?php
+		print_r($nodes); 
+		?>
+		</div>
+
+    </div>    
+  </div>
+</div>
